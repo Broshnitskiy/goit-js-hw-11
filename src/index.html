@@ -12,9 +12,18 @@
     />
   </head>
   <body>
-  
+    <form class="search-form" id="search-form">
+      <input
+        type="text"
+        name="searchQuery"
+        autocomplete="off"
+        placeholder="Search images..."
+      />
+      <button type="submit">Search</button>
+    </form>
 
-    <!-- Скрипт идёт последним в разметке. В нём уже подключен главный SASS-файл. -->
+    <div class="gallery"></div>
+   
     <script src="./index.js"></script>
   </body>
 </html>
