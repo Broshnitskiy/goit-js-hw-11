@@ -5,25 +5,52 @@ import axios from "axios";
 
 const formRef = document.querySelector("#search-form");
 const galleryRef = document.querySelector(".gallery");
+const btnLoadRef = document.querySelector(".load-more");
+
+btnLoadRef.setAttribute("disabled", "true");
+let page = 1;
+let inputName = "";
 
 formRef.addEventListener("submit", onSubmitForm);
 
-function onSubmitForm(event) {
+  async function onSubmitForm(event) {
     event.preventDefault();
     galleryRef.innerHTML = "";
-    const inputName = event.target.searchQuery.value;
-    getImages(inputName)
-        .then(({ data: { hits: images } }) => {
-            if(images.length===0) {
-                Notify.failure("Sorry, there are no images matching your search query. Please try again.")
-            }
-        images.map(image => {
-         galleryRef.insertAdjacentHTML("beforeend", markImageCard(image))})
-        })
-        .catch(error => {
-        console.log(error)
-    })
-   
+    btnLoadRef.removeAttribute("disabled", "true");
+    inputName = event.target.searchQuery.value;
+    if (inputName.trim() === "") {
+        return
+    };
+    // getImages(inputName)
+    //     .then(( { hits: images } ) => {
+    //         if(images.length===0) {
+    //             Notify.failure("Sorry, there are no images matching your search query. Please try again.")
+    //         }
+    //     images.map(image => {
+    //       galleryRef.insertAdjacentHTML("beforeend", markImageCard(image))
+    //     });
+    //       page += 1;
+    //     })
+    //     .catch(error => {
+    //     console.log(error)
+    // })
+    
+    try {
+      const data = await getImages(inputName.trim());
+      const images = data.hits;
+
+        if (images.length===0) {
+           Notify.failure("Sorry, there are no images matching your search query. Please try again.")
+        }
+      
+      images.map(image => {
+          galleryRef.insertAdjacentHTML("beforeend", markImageCard(image))
+        });
+
+    }
+    catch(error) {
+      console.log(error.message)
+    }
 }
 
   
@@ -35,11 +62,13 @@ function onSubmitForm(event) {
             image_type: "photo",
             orientation: "horizontal",
             safesearch: true,
+            page,
+            per_page: 40,
         }
     };
 
     const response = await axios.get("https://pixabay.com/api/", searchParams);
-    return response;
+    return response.data;
 };
 
 
