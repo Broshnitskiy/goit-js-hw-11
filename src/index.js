@@ -13,6 +13,7 @@ btnLoadRef.classList.add("hidden");
 let page = 1;
 const per_page = 40;
 let inputName = "";
+let gallery = {};
 
 
 formRef.addEventListener("submit", onSubmitForm);
@@ -33,14 +34,14 @@ async function onSubmitForm(event) {
       const data = await getImages(inputName.trim());
       
         if (data.hits.length===0) {
-          Notify.failure("Sorry, there are no images matching your search query. Please try again.", { timeout: 3500 });
+          Notify.failure("Sorry, there are no images matching your search query. Please try again.", { timeout: 3000 });
         } else {
           Notify.success(`Hooray! We found ${data.totalHits} images`, { timeout: 2500 });
           markImageCard(data.hits);
-          new SimpleLightbox('.gallery a', {captionsData: "alt", captionDelay: 250});
+          gallery = new SimpleLightbox('.gallery a', { captionsData: "alt", captionDelay: 250 });
           page += 1;
 
-          btnLoadRef.classList.remove("hidden");
+         (page * per_page) <= data.totalHits && btnLoadRef.classList.remove("hidden");
         }
       
     }
@@ -49,18 +50,24 @@ async function onSubmitForm(event) {
     }
 };
 
-async function onBtnLoadClick(){
+async function onBtnLoadClick() {
   try {
     const data = await getImages(inputName.trim());
     
       if ((page * per_page) >= data.totalHits) {
         btnLoadRef.classList.add("hidden");
-        Notify.info("We're sorry, but you've reached the end of search results.", { timeout: 5000 },)
+        Notify.info("We're sorry, but you've reached the end of search results.", { timeout: 4000 },);
        }
       
     markImageCard(data.hits);
-    
+    gallery.refresh();
     page += 1;
+
+      const {height} = document.querySelector('.gallery').firstElementChild.getBoundingClientRect();
+      window.scrollBy({
+        top: height * 2,
+        behavior: 'smooth',
+      });
     }
     catch(error) {
       console.log(error.message)
@@ -90,8 +97,10 @@ function markImageCard(images) {
   const markUp = images.map(image => {
     const { webformatURL, largeImageURL, tags, likes, views, comments, downloads } = image;
     return `<a class="gallery__item" href="${largeImageURL}">
-      <div class="photo-card">
-      <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+    <div class="photo-card">
+      <div class="wrapper-img">
+        <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+      </div>  
       <div class="info">
         <p class="info-item">
           <b>Likes </b>${likes}
@@ -107,7 +116,7 @@ function markImageCard(images) {
         </p>
       </div>
     </div>
-    </a>`;
+  </a>`;
   }).join("");
   galleryRef.insertAdjacentHTML("beforeend", markUp)
 };
