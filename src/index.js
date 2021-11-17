@@ -15,7 +15,6 @@ const per_page = 40;
 let inputName = "";
 let gallery = {};
 
-
 formRef.addEventListener("submit", onSubmitForm);
 btnLoadRef.addEventListener("click", onBtnLoadClick)
 
