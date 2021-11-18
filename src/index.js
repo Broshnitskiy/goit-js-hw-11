@@ -38,9 +38,10 @@ async function onSubmitForm(event) {
           Notify.success(`Hooray! We found ${data.totalHits} images`, { timeout: 2500 });
           markImageCard(data.hits);
           gallery = new SimpleLightbox('.gallery a', { captionsData: "alt", captionDelay: 250 });
-          page += 1;
-
-         (page * per_page) <= data.totalHits && btnLoadRef.classList.remove("hidden");
+         
+          (page * per_page) <= data.totalHits && btnLoadRef.classList.remove("hidden");
+          
+           page += 1;
         }
       
     }

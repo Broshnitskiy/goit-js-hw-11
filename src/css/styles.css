@@ -48,6 +48,9 @@ body {
 }
 
 .search-form {
+  position: fixed;
+  z-index: 99;
+  width: 100%;
   text-align: center;
   padding-top: 15px;
   padding-bottom: 15px;
@@ -65,14 +68,15 @@ body {
 
 .gallery {
   padding: 10px;
+  padding-top: 80px;
   display: flex;
   flex-wrap: wrap;
-  margin-top: -10px;
+  margin-bottom: -10px;
   margin-left: -10px;
 }
 
 .gallery__item {
-  margin-top: 10px;
+  margin-bottom: 10px;
   margin-left: 10px;
   flex-basis: calc(100% / 4 - 10px);
 }
