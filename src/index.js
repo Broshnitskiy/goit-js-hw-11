@@ -1,7 +1,7 @@
 import "./css/styles.css";
+import { getImages } from "./services/backend.js";
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import "notiflix/dist/notiflix-3.2.2.min.css";
-import axios from "axios";
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
@@ -30,7 +30,7 @@ async function onSubmitForm(event) {
     };
   
     try {
-      const data = await getImages(inputName.trim());
+      const data = await getImages(inputName.trim(), page, per_page);
       
         if (data.hits.length===0) {
           Notify.failure("Sorry, there are no images matching your search query. Please try again.", { timeout: 3000 });
@@ -52,7 +52,7 @@ async function onSubmitForm(event) {
 
 async function onBtnLoadClick() {
   try {
-    const data = await getImages(inputName.trim());
+    const data = await getImages(inputName.trim(), page, per_page);
     
       if ((page * per_page) >= data.totalHits) {
         btnLoadRef.classList.add("hidden");
@@ -73,24 +73,6 @@ async function onBtnLoadClick() {
       console.log(error.message)
     }
 }
-
-  
- async function getImages(name) {
-    const searchParams = {
-        params: {
-            key: "24331770-d1c322a83c5704f619e69b687",
-            q:`${name}`,
-            image_type: "photo",
-            orientation: "horizontal",
-            safesearch: true,
-            page,
-            per_page,
-        }
-    };
-
-    const response = await axios.get("https://pixabay.com/api/", searchParams);
-    return response.data;
-};
 
 
 function markImageCard(images) {
